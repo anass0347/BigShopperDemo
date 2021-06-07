@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Test</title>
+
+    <script>
+        fetch("/restservices/list")
+        .then(response => Promise.all([response.status,response.json()]))
+        .then(([stat, myJson]) => {
+            if (stat !== 200){
+                console.log(myJson.error)
+            }else{
+                console.log(myJson);
+            }
+        });
+
+
+
+    </script>
 </head>
 <body>
 <h1>What API call to test? </h1>
@@ -38,6 +53,27 @@
             non-existent shopper</a>
     </li>
 </ul>
+
+<form id="POSTcustomerForm">
+    <label for="name">Customer name:<input type="text" id="name" name="name"/></label>
+    <input type="button" id="postNoJackson" value="JobPost!">
+    <input type="button" id="postJackson" value="JacksonPost!">
+
+</form>
+
+<script type="text/javascript">
+    document.querySelector("#postNoJackson").addEventListener("click", function(){
+        var formData = new FormData(document.querySelector("#POSTcustomerForm"));
+        var encData = new URLSearchParams(formData.entries());
+
+        fetch("rest/customers/nojackson", {method: "POST", body: encData})
+            .then(response =>response.json())
+            .then(function (myJson){
+                console.log(myJson);
+            });
+    });
+
+</script>
 <!-- your POST form here -->
 </body>
 </html>

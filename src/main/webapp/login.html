@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        document.addEventListener("load", event =>{
+            document.querySelector("login_button").addEventListener("click", login);
+            document.querySelector("secure_button").addEventListener("click", secure);
+        });
+
+        async function login(){
+            console.log("login");
+            var formData = new FormData(document.querySelector("#demologin"));
+            var encData = new URLSearchParams(formData.entries());
+
+            let response = await fetch("restservices/login", {method: "POST", body: encData})
+
+            if(response.status === 200){
+                let myJson = await response.json();
+                window.sessionStorage.setItem("abc",myJson.JWT)
+            }else{
+                console.log("Login failed");
+            }
+
+        }
+        async function secure(){
+            console.log("secure");
+            var fetchOptions = {
+                method: "GET",
+                headers : {
+                    "Authorization": "Bearer " +window.sessionStorage.getItem("abc")
+                }
+            }
+
+            let response = await fetch("restservices/product", fetchOptions);
+            if(response.status === 200){
+                let myJson = await response.json()
+                console.log(myJson);
+
+            }else{
+                console.log("fail");
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div id="main">
+        <form id="demologin">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username"><br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password"><br>
+            <input type="button" id="login_button" value="login" onclick="login()"/>
+        </form>
+        <br><hr><br>
+
+        <form id="demosecure">
+            <input type="button" id="secure_button" value="call secure webservice" onclick="secure()"/>
+        </form>
+
+
+    </div>
+
+</body>
+</html>
